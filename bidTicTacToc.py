@@ -1,6 +1,6 @@
 from graphics import *
-
-
+from Actions import *
+import math
 
 class Player:
 
@@ -19,6 +19,7 @@ class Table:
 		self.listPos = [[' ']*3,[' ']*3,[' ']*3]
 
 	def printTable(self):
+		''' prints tic tac toe in terminal '''
 		print(' '+ self.listPos[0][0]+' | '+self.listPos[0][1]+' | '+self.listPos[0][2])
 		print('-----------')
 		print(' '+ self.listPos[1][0]+' | '+self.listPos[1][1]+' | '+self.listPos[1][2])
@@ -47,6 +48,7 @@ class Table:
 		return(False)
 
 def draw(win,center,shape):
+	''' graphics: draw 'X' or 'O' '''
 	if(shape == 'X'):
 		x,y = center.x , center.y
 		X1 = Line(Point(x-10,y-10),Point(x+10,y+10))
@@ -63,6 +65,7 @@ def draw(win,center,shape):
 		circle.draw(win)
 
 def get_box(px,py):
+	''' takes cordinates px,py and returns the box indexes and the center in graphics '''
 	linesize = 200/3
 	if(px > 50 and px <= 50+linesize and py > 50 and py <= 50+linesize ):
 		return (0,0,Point(50+(linesize/2),50+(linesize/2)))
@@ -93,7 +96,37 @@ def get_box(px,py):
 
 	return (10,10,Point(150,150))
 
+def get_center(i,j):
+	''' takes cordinates px,py and returns the box indexes and the center in graphics '''
+	linesize = 200/3
+	if(i == 0 and j == 0 ):
+		return Point(50+(linesize/2),50+(linesize/2))
 
+	if(i == 0 and j == 1 ):
+		return Point(50+(3*linesize/2),50+(linesize/2))
+
+	if(i == 0 and j == 2 ):
+		return Point(150+linesize,50+(linesize/2))
+
+	if( i == 1 and j == 0 ):
+		return Point(50+(linesize/2),50+(3*linesize/2))
+
+	if( i == 1 and j == 1 ):
+		return Point(50+(3*linesize/2),50+(3*linesize/2))
+
+	if( i == 1 and j == 2 ):
+		return Point(150+linesize,50+(3*linesize/2))
+
+	if( i == 2 and j == 0 ):
+		return Point(50+(linesize/2),150+linesize)
+
+	if( i == 2 and j == 1 ):
+		return Point(50+(3*linesize/2),150+linesize)
+
+	if( i == 2 and j == 2 ):
+		return Point(150+linesize,150+linesize)
+
+	return Point(150,150)
 
 def main():
 
@@ -161,35 +194,66 @@ def main():
 
 
 	i = 0
+	agent = MinimaxAgent()
 	while i < 9:
+
+		# f1  = agent.getAction(table.listPos,player1.shape,player2.shape)[0]
+		# f2 = agent.getAction(table.listPos,player2.shape,player1.shape)[1]
+		# bid = (abs(f1-f2)/2)*200
+		# print("bid is ",bid)
+		agent.calculateBid(0,table.listPos,'O')
+
+
 		print('Current marks player1: ',player1.marks,'  player2: ',player2.marks)
 		#con = input('Press when ready ')
 		k = win.getKey()
 		while  k != 'Return':
 			k = win.getKey()
 		bidP1 = int(textEntryP1.getText())
-		bidP2 = int(textEntryP2.getText())
+		# bidP2 = int(textEntryP2.getText())
+		bidP2 = math.floor((abs(agent.tmp1-agent.tmp2)/2) * 200)
+		if(bidP2 > player2.marks):
+			bidP2 = player2.marks
+
+
+
+
+
 		if bidP1 > player1.marks or bidP2 > player2.marks:
 			continue
 		if bidP1 > bidP2 :
 			player = player1
 			player1.marks -= bidP1
 			player2.marks += bidP1
+
+			print(player.name,'plays')
+			showMarks1.setText(player1.marks)
+			showMarks2.setText(player2.marks)
+			flag = True
+			while flag:
+				p1mouse = win.getMouse()
+				print(p1mouse.getX(), p1mouse.getY())
+				row,col,c = get_box(p1mouse.getX(),p1mouse.getY())
+				print(row,col)
+				#row = int(input("Enter a row: "))
+				#col = int(input("Enter a column: "))
+				if player.play(row,col,table):
+					draw(win,c,player.shape)
+					table.printTable()
+					i+=1
+					flag = False
+				else:
+					print("illegal move")
+
 		else:
 			player = player2
 			player2.marks -= bidP2
 			player1.marks += bidP2
-		print(player.name,'plays')
-		showMarks1.setText(player1.marks)
-		showMarks2.setText(player2.marks)
-		flag = True
-		while flag:
-			p1mouse = win.getMouse()
-			print(p1mouse.getX(), p1mouse.getY())
-			row,col,c = get_box(p1mouse.getX(),p1mouse.getY())
-			print(row,col)
-			#row = int(input("Enter a row: "))
-			#col = int(input("Enter a column: "))
+			(row,col) = agent.getAction(table.listPos,'O','X')
+			c = get_center(row,col)
+			print(player.name,'plays')
+			showMarks1.setText(player1.marks)
+			showMarks2.setText(player2.marks)
 			if player.play(row,col,table):
 				draw(win,c,player.shape)
 				table.printTable()
