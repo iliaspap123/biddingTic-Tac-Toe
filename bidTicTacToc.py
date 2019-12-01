@@ -145,8 +145,10 @@ def main():
 		vline.draw(win)
 
 	textEntryP1 = Entry(Point(50,20),5)
+	textEntryP1.setFill("white")
 	textEntryP1.draw(win)
 	textEntryP2 = Entry(Point(250,20),5)
+	textEntryP2.setFill("white")
 	textEntryP2.draw(win)
 
 
@@ -201,9 +203,12 @@ def main():
 		# f2 = agent.getAction(table.listPos,player2.shape,player1.shape)[1]
 		# bid = (abs(f1-f2)/2)*200
 		# print("bid is ",bid)
-		agent.calculateBid(0,table.listPos,'O')
-
-
+		textEntryP2.setText("")
+		(res,pos) = agent.getAction2(table.listPos)
+		if res*200 <= player2.marks:
+			print("I have a winnig strategy",player2.marks,"over",(res*200))
+		else:
+			print((res*200),"not yet",player2.marks)
 		print('Current marks player1: ',player1.marks,'  player2: ',player2.marks)
 		#con = input('Press when ready ')
 		k = win.getKey()
@@ -221,6 +226,8 @@ def main():
 
 		if bidP1 > player1.marks or bidP2 > player2.marks:
 			continue
+
+		textEntryP2.setText(bidP2)
 		if bidP1 > bidP2 :
 			player = player1
 			player1.marks -= bidP1
@@ -249,7 +256,8 @@ def main():
 			player = player2
 			player2.marks -= bidP2
 			player1.marks += bidP2
-			(row,col) = agent.getAction(table.listPos,'O','X')
+			#(row,col) = agent.getAction(table.listPos,'O','X')
+			(row,col) = pos
 			c = get_center(row,col)
 			print(player.name,'plays')
 			showMarks1.setText(player1.marks)

@@ -65,6 +65,7 @@ class MinimaxAgent:
     def __init__(self):
         self.tmp1=0
         self.tmp2=0
+        self.state = []
     def evaluationFunction(self,listPos,p1):
         eval = 1
         for i in range(3):
@@ -114,17 +115,38 @@ class MinimaxAgent:
                 return(-1)
         return eval
 
+    def getAction2(self,gameState):
+        if gameState == [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]:
+            self.tmp1 = 0.359375
+            self.tmp2 = 0.6796875
+            self.state = [[' ',' ',' '],[' ','O',' '],[' ',' ',' ']]
+            return (0.51953125,(1,1))
+        def calculateBid(depth,gameState):
+            # print(gameState)
+            if isFull(gameState) or isWin(gameState) or depth == 9:  # return the utility in case the defined depth is reached or the game is won/lost.
+                return self.evaluationFunction(gameState,'O')
+            depth += 1
+            minR = float("inf")
+            sucs = getSuccessors(gameState,'O')
+            for nextState in sucs:
+                v = calculateBid(depth,nextState)
+                if v <= minR:
+                    minR = v
+                    bestMove = nextState
+            # minR = min(self.calculateBid(depth,nextState) for nextState in )
+            maxR = max(calculateBid(depth,nextState) for nextState in getSuccessors(gameState,'X'))
+            self.tmp1 = minR
+            self.tmp2 = maxR
+            self.state = bestMove
+            return abs(minR+maxR) / 2
 
-    def calculateBid(self,depth,gameState,player):
-        # print(gameState)
-        if isFull(gameState) or isWin(gameState) or depth == 9:  # return the utility in case the defined depth is reached or the game is won/lost.
-            return self.evaluationFunction(gameState,'X')
-        depth += 1
-        minR = min(self.calculateBid(depth,nextState,'X') for nextState in getSuccessors(gameState,'X'))
-        maxR = max(self.calculateBid(depth,nextState,'O') for nextState in getSuccessors(gameState,'O'))
-        self.tmp1 = minR
-        self.tmp2 = maxR
-        return abs(minR+maxR) / 2
+        res = calculateBid(0,gameState)
+        for i in range(3):
+            for j in range(3):
+                if gameState[i][j] != self.state[i][j]:
+                    pos = (i,j)
+        # print(res,pos,self.tmp1,self.tmp2)
+        return (res,pos)
 
     def getAction(self, gameState,p1,p2):
         """
@@ -160,7 +182,7 @@ class MinimaxAgent:
                     pos = (i,j)
         return pos
 
-cur = [['O','X',' '],[' ','X',' '],[' ','O',' ']]
+# cur = [['O','X',' '],[' ','X',' '],[' ','O',' ']]
 # sucs = getSuccessors(cur,'X')
 # for x in sucs:
 #     print(x)
@@ -173,13 +195,10 @@ cur = [['O','X',' '],[' ','X',' '],[' ','O',' ']]
 #         if cur[i][j] != act[i][j]:
 #             print(i,j)
 # #
-# cur = [['X',' ',' '],[' ',' ',' '],[' ',' ',' ']]
-# #
-#
-# sucs = getSuccessors(cur,'X')
-# for x in sucs:
-#     print(x)
-# agent = MinimaxAgent()
-# res = agent.calculateBid(0,cur,'X')
-# print(res)
-# print(agent.tmp1,agent.tmp2)
+cur = [['X',' ','O'],[' ','X','X'],[' ','O','O']]
+
+agent = MinimaxAgent()
+res = agent.getAction2(cur)
+print(res)
+print(agent.tmp1,agent.tmp2)
+print(agent.state)
