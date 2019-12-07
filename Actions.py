@@ -1,4 +1,4 @@
-
+import time
 # class Actions(object):
 #     """ """
 
@@ -17,7 +17,10 @@ def getSuccessors(currentState,shape):
                 if True in [isSymmetric(newState,previousState) for previousState in succesors]:
                     # print(newState,succesors,newState[::-1] == [])
                     continue
-                succesors.append(newState)
+                if isWin(newState):
+                    succesors.insert(0,newState)
+                else:
+                    succesors.append(newState)
     return succesors
 
 def isSymmetric(x,y):
@@ -66,6 +69,7 @@ class MinimaxAgent:
         self.tmp1=0
         self.tmp2=0
         self.state = []
+        self.sum = 0
     def evaluationFunction(self,listPos,p1):
         eval = 1
         for i in range(3):
@@ -116,13 +120,14 @@ class MinimaxAgent:
         return eval
 
     def getAction2(self,gameState):
-        if gameState == [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]:
-            self.tmp1 = 0.359375
-            self.tmp2 = 0.6796875
-            self.state = [[' ',' ',' '],[' ','O',' '],[' ',' ',' ']]
-            return (0.51953125,(1,1))
+        # if gameState == [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]:
+        #     self.tmp1 = 0.359375
+        #     self.tmp2 = 0.6796875
+        #     self.state = [[' ',' ',' '],[' ','O',' '],[' ',' ',' ']]
+        #     return (0.51953125,(1,1))
         def calculateBid(depth,gameState):
-            # print(gameState)
+            # print(" "*depth,gameState)
+            self.sum+=1
             if isFull(gameState) or isWin(gameState) or depth == 9:  # return the utility in case the defined depth is reached or the game is won/lost.
                 return self.evaluationFunction(gameState,'O')
             depth += 1
@@ -133,8 +138,21 @@ class MinimaxAgent:
                 if v <= minR:
                     minR = v
                     bestMove = nextState
+                    if minR == 0:
+                        break
+
+            if minR == 1:
+                return 1
             # minR = min(self.calculateBid(depth,nextState) for nextState in )
-            maxR = max(calculateBid(depth,nextState) for nextState in getSuccessors(gameState,'X'))
+            # maxR = max(calculateBid(depth,nextState) for nextState in getSuccessors(gameState,'X'))
+            maxR = float("-inf")
+            sucs = getSuccessors(gameState,'X')
+            for nextState in sucs:
+                v = calculateBid(depth,nextState)
+                if v >= maxR:
+                    maxR = v
+                    if maxR == 1:
+                        break
             self.tmp1 = minR
             self.tmp2 = maxR
             self.state = bestMove
@@ -195,10 +213,16 @@ class MinimaxAgent:
 #         if cur[i][j] != act[i][j]:
 #             print(i,j)
 # #
-cur = [['X',' ','O'],[' ','X','X'],[' ','O','O']]
 
-agent = MinimaxAgent()
-res = agent.getAction2(cur)
-print(res)
-print(agent.tmp1,agent.tmp2)
-print(agent.state)
+# cur = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+#
+# agent = MinimaxAgent()
+# start_time = time.time()
+# res = agent.getAction2(cur)
+# elapsed_time = time.time() - start_time
+#
+# print(res)
+# print(agent.tmp1,agent.tmp2)
+# print(agent.state)
+# print("elapsed time is ",elapsed_time)
+# print("sum is",agent.sum)

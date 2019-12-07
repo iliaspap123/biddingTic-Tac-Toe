@@ -228,7 +228,7 @@ def main():
 			continue
 
 		textEntryP2.setText(bidP2)
-		if bidP1 > bidP2 :
+		if bidP1 > bidP2:
 			player = player1
 			player1.marks -= bidP1
 			player2.marks += bidP1
