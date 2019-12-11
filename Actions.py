@@ -128,7 +128,7 @@ class MinimaxAgent:
         def calculateBid(depth,gameState):
             # print(" "*depth,gameState)
             self.sum+=1
-            if isFull(gameState) or isWin(gameState) or depth == 9:  # return the utility in case the defined depth is reached or the game is won/lost.
+            if isFull(gameState) or isWin(gameState) or depth == 3:  # return the utility in case the defined depth is reached or the game is won/lost.
                 return self.evaluationFunction(gameState,'O')
             depth += 1
             minR = float("inf")
@@ -142,13 +142,14 @@ class MinimaxAgent:
                         break
 
             if minR == 1:
+                self.state = bestMove
                 return 1
             # minR = min(self.calculateBid(depth,nextState) for nextState in )
             # maxR = max(calculateBid(depth,nextState) for nextState in getSuccessors(gameState,'X'))
             maxR = float("-inf")
             sucs = getSuccessors(gameState,'X')
             for nextState in sucs:
-                v = calculateBid(depth,nextState)
+                v = calculateBid(0,nextState)
                 if v >= maxR:
                     maxR = v
                     if maxR == 1:
@@ -214,15 +215,14 @@ class MinimaxAgent:
 #             print(i,j)
 # #
 
-# cur = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+# cur = [[' ','X',' '],[' ','X',' '],['O','O','X']]
 #
 # agent = MinimaxAgent()
 # start_time = time.time()
 # res = agent.getAction2(cur)
 # elapsed_time = time.time() - start_time
-#
 # print(res)
 # print(agent.tmp1,agent.tmp2)
 # print(agent.state)
 # print("elapsed time is ",elapsed_time)
-# print("sum is",agent.sum)
+# # print("sum is",agent.sum)

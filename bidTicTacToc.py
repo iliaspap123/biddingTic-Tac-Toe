@@ -207,8 +207,14 @@ def main():
 		(res,pos) = agent.getAction2(table.listPos)
 		if res*200 <= player2.marks:
 			print("I have a winnig strategy",player2.marks,"over",(res*200))
+			bidP2 = math.floor((abs(agent.tmp1-agent.tmp2)/2) * 200)
 		else:
-			print((res*200),"not yet",player2.marks)
+			if agent.tmp2 == 1:
+				bidP2 = player1.marks+1
+			else:
+				minus = math.ceil((res*200 - player2.marks)/2)
+				bidP2 = math.floor((abs(agent.tmp1-agent.tmp2)/2) * 200) - minus
+			print((res*200),"not yet",player2.marks,"    ",minus)
 		print('Current marks player1: ',player1.marks,'  player2: ',player2.marks)
 		#con = input('Press when ready ')
 		k = win.getKey()
@@ -216,7 +222,6 @@ def main():
 			k = win.getKey()
 		bidP1 = int(textEntryP1.getText())
 		# bidP2 = int(textEntryP2.getText())
-		bidP2 = math.floor((abs(agent.tmp1-agent.tmp2)/2) * 200)
 		if(bidP2 > player2.marks):
 			bidP2 = player2.marks
 
