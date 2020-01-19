@@ -166,7 +166,7 @@ class MinimaxAgent:
                     pos = (i,j)
         # print(res,pos,self.tmp1,self.tmp2)
         return (res,pos)
-
+    '''
     def getAction(self, gameState,p1,p2):
         """
           Returns the minimax action from the current gameState using self.depth
@@ -200,7 +200,7 @@ class MinimaxAgent:
                 if gameState[i][j] != action[i][j]:
                     pos = (i,j)
         return pos
-
+    '''
 # cur = [['O','X',' '],[' ','X',' '],[' ','O',' ']]
 # sucs = getSuccessors(cur,'X')
 # for x in sucs:

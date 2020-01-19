@@ -130,7 +130,7 @@ def get_center(i,j):
 
 def main():
 
-
+	''' Graphics '''
 	windowsize = 300
 	linesize = 200
 	squares = 3
@@ -150,9 +150,9 @@ def main():
 	textEntryP2 = Entry(Point(250,20),5)
 	textEntryP2.setFill("white")
 	textEntryP2.draw(win)
+	''' '''
 
-
-
+	''' Initialize '''
 	player1 = Player('X',100,'player1')
 	player2 = Player('O',100,'player2')
 	print(player1.shape,player1.marks)
@@ -160,35 +160,9 @@ def main():
 	table = Table()
 	print(table.listPos)
 	table.printTable()
+	''' '''
 
-	#player1.play(0,0,table)
-	#player1.play(0,1,table)
-	#player1.play(0,2,table)
-
-	'''
-	table.printTable()
-	print(table.isWinnigState())
-	i = 0
-	while i < 9:
-		if i%2 :
-			player = player1
-		else:
-			player = player2
-		row = int(input("Enter a row: "))
-		col = int(input("Enter a column: "))
-		if player.play(row,col,table):
-			table.printTable()
-			i+=1
-		else:
-			print("illegal move")
-		if table.isWinnigState():
-			print("we have a winner")
-			break
-	'''
-
-	#while True:
-		#p1x = p1mouse.getX()
-		#p1y = p1mouse.getY()
+	# graphics print marks number
 	showMarks1 = Text(Point(90, 20), player1.marks)
 	showMarks1.draw(win)
 	showMarks2 = Text(Point(210, 20), player2.marks)
@@ -196,32 +170,37 @@ def main():
 
 
 	i = 0
-	agent = MinimaxAgent()
+	agent = MinimaxAgent() # initialize agent
 	while i < 9:
 
-		# f1  = agent.getAction(table.listPos,player1.shape,player2.shape)[0]
-		# f2 = agent.getAction(table.listPos,player2.shape,player1.shape)[1]
-		# bid = (abs(f1-f2)/2)*200
-		# print("bid is ",bid)
-		textEntryP2.setText("")
-		(res,pos) = agent.getAction2(table.listPos)
-		if res*200 <= player2.marks:
+		(res,pos) = agent.getAction2(table.listPos) # find best bet and move
+		if res*200 <= player2.marks: # if have enough marks
 			print("I have a winnig strategy",player2.marks,"over",(res*200))
 			bidP2 = math.floor((abs(agent.tmp1-agent.tmp2)/2) * 200)
 		else:
-			if agent.tmp2 == 1:
+			if agent.tmp2 == 1: # if next move is final
 				bidP2 = player1.marks+1
 			else:
 				minus = math.ceil((res*200 - player2.marks)/2)
 				bidP2 = math.floor((abs(agent.tmp1-agent.tmp2)/2) * 200) - minus
 			print((res*200),"not yet",player2.marks,"    ",minus)
 		print('Current marks player1: ',player1.marks,'  player2: ',player2.marks)
-		#con = input('Press when ready ')
-		k = win.getKey()
+
+		''' get valid entry '''
+		k = win.getKey() # wait for players move
 		while  k != 'Return':
 			k = win.getKey()
-		bidP1 = int(textEntryP1.getText())
-		# bidP2 = int(textEntryP2.getText())
+
+		str_int = textEntryP1.getText()
+		while not str_int.isdigit():
+			print("please type integer")
+			k = win.getKey()
+			while  k != 'Return':
+				k = win.getKey()
+			str_int = textEntryP1.getText()
+
+		bidP1 = int(str_int)
+
 		if(bidP2 > player2.marks):
 			bidP2 = player2.marks
 
